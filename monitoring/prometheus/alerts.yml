@@ -1,0 +1,136 @@
+# Prometheus Alert Rules for Fraud Detection System
+
+groups:
+  - name: fraud-detection-alerts
+    rules:
+      # High fraud rate alert
+      - alert: HighFraudRate
+        expr: (sum(increase(fraud_detected_total[1h])) / sum(increase(fraud_predictions_total[1h]))) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High fraud rate detected"
+          description: "Fraud rate is above 10% for the last hour (current: {{ $value | humanizePercentage }})"
+
+      # Very high fraud rate - critical
+      - alert: CriticalFraudRate
+        expr: (sum(increase(fraud_detected_total[15m])) / sum(increase(fraud_predictions_total[15m]))) > 0.2
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical fraud rate spike"
+          description: "Fraud rate has spiked above 20% in the last 15 minutes (current: {{ $value | humanizePercentage }})"
+
+      # API response time alert
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(fraud_prediction_duration_seconds_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API response time"
+          description: "95th percentile response time is above 500ms (current: {{ $value | humanize }}s)"
+
+      # API down alert
+      - alert: APIDown
+        expr: up{job="fraud-detection-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Fraud Detection API is down"
+          description: "The Fraud Detection API has been unreachable for more than 1 minute"
+
+      # Model not loaded
+      - alert: ModelNotLoaded
+        expr: fraud_model_loaded == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ML Model not loaded"
+          description: "The fraud detection ML model is not loaded and predictions cannot be made"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (process_resident_memory_bytes / 1024 / 1024) > 1500
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Process memory usage is above 1.5GB (current: {{ $value | humanize }}MB)"
+
+      # Error rate alert
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP error rate"
+          description: "HTTP 5xx error rate is above 10% (current: {{ $value | humanizePercentage }})"
+
+      # No predictions in the last hour
+      - alert: NoPredictions
+        expr: increase(fraud_predictions_total[1h]) == 0
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No predictions made"
+          description: "No fraud predictions have been made in the last 30 minutes"
+
+  - name: infrastructure-alerts
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% (current: {{ $value | humanize }}%)"
+
+      # Low disk space
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Available disk space is below 20% (current: {{ $value | humanize }}%)"
+
+      # Redis down
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been unreachable for more than 2 minutes"
+
+      # PostgreSQL down
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL has been unreachable for more than 2 minutes"
+
+      # High database connections
+      - alert: HighDatabaseConnections
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of database connections"
+          description: "Active database connections are above 80 (current: {{ $value }})"

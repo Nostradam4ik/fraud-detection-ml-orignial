@@ -1,0 +1,26 @@
+# ZAP Scan Rule Configuration
+# Format: RuleID	Action	URL Pattern
+
+# Ignore informational findings
+10015	IGNORE	.*	# Incomplete or No Cache-control
+10027	IGNORE	.*	# Information Disclosure - Suspicious Comments
+10096	IGNORE	.*	# Timestamp Disclosure
+
+# Ignore false positives for API endpoints
+10020	IGNORE	/api/.*	# Anti-CSRF Tokens (API uses JWT)
+10021	IGNORE	/api/.*	# X-Content-Type-Options (handled by middleware)
+
+# Alert on critical issues
+10016	FAIL	.*	# Web Browser XSS Protection Not Enabled
+10017	FAIL	.*	# Cross-Domain JavaScript Source File
+10019	FAIL	.*	# Content-Type Header Missing
+10038	FAIL	.*	# Content Security Policy Header Not Set
+10054	FAIL	.*	# Cookie without SameSite Attribute
+10055	FAIL	.*	# CSP: Wildcard Directive
+40012	FAIL	.*	# Cross Site Scripting (Reflected)
+40014	FAIL	.*	# Cross Site Scripting (Persistent)
+40016	FAIL	.*	# Cross Site Scripting (Persistent via Upload)
+40018	FAIL	.*	# SQL Injection
+40024	FAIL	.*	# SQL Injection - PostgreSQL
+90020	FAIL	.*	# Remote OS Command Injection
+90023	FAIL	.*	# XML External Entity Attack

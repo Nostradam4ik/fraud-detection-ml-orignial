@@ -1,0 +1,788 @@
+{
+  "info": {
+    "name": "Fraud Detection API",
+    "description": "Complete API collection for the Fraud Detection System.\n\n## Getting Started\n\n1. Set the `base_url` variable to your API endpoint\n2. Register a new user or login with existing credentials\n3. The access token will be automatically saved for authenticated requests\n\n## Authentication\n\nMost endpoints require a Bearer token. After login, the token is automatically set in the collection variables.\n\n## Author\nZhmuryk Andrii\n\n## Version\n2.0.0",
+    "_postman_id": "fraud-detection-api-v2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "User authentication endpoints",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"full_name\": \"Test User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            },
+            "description": "Register a new user account"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.refresh_token);",
+                  "    console.log('Tokens saved successfully');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"SecurePassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login and get access token. Token is automatically saved to collection variables."
+          }
+        },
+        {
+          "name": "Login with 2FA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', jsonData.refresh_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"SecurePassword123!\",\n  \"totp_code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Login with TOTP code for 2FA-enabled accounts"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            },
+            "description": "Get current authenticated user profile"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            },
+            "description": "Refresh access token using refresh token"
+          }
+        },
+        {
+          "name": "Setup 2FA",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/2fa/setup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "2fa", "setup"]
+            },
+            "description": "Get QR code and secret for 2FA setup"
+          }
+        },
+        {
+          "name": "Verify 2FA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"totp_code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/2fa/verify",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "2fa", "verify"]
+            },
+            "description": "Verify TOTP code and enable 2FA"
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"SecurePassword123!\",\n  \"new_password\": \"NewSecurePassword456!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "change-password"]
+            },
+            "description": "Change current user's password"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            },
+            "description": "Logout and revoke refresh token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Predictions",
+      "description": "Fraud prediction endpoints",
+      "item": [
+        {
+          "name": "Predict Single Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"time\": 0,\n  \"v1\": -1.359807,\n  \"v2\": -0.072781,\n  \"v3\": 2.536347,\n  \"v4\": 1.378155,\n  \"v5\": -0.338321,\n  \"v6\": 0.462388,\n  \"v7\": 0.239599,\n  \"v8\": 0.098698,\n  \"v9\": 0.363787,\n  \"v10\": 0.090794,\n  \"v11\": -0.551600,\n  \"v12\": -0.617801,\n  \"v13\": -0.991390,\n  \"v14\": -0.311169,\n  \"v15\": 1.468177,\n  \"v16\": -0.470401,\n  \"v17\": 0.207971,\n  \"v18\": 0.025791,\n  \"v19\": 0.403993,\n  \"v20\": 0.251412,\n  \"v21\": -0.018307,\n  \"v22\": 0.277838,\n  \"v23\": -0.110474,\n  \"v24\": 0.066928,\n  \"v25\": 0.128539,\n  \"v26\": -0.189115,\n  \"v27\": 0.133558,\n  \"v28\": -0.021053,\n  \"amount\": 149.62\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict"]
+            },
+            "description": "Predict fraud probability for a single transaction"
+          }
+        },
+        {
+          "name": "Predict Batch (JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transactions\": [\n    {\n      \"time\": 0,\n      \"v1\": -1.359807,\n      \"v2\": -0.072781,\n      \"v3\": 2.536347,\n      \"v4\": 1.378155,\n      \"v5\": -0.338321,\n      \"v6\": 0.462388,\n      \"v7\": 0.239599,\n      \"v8\": 0.098698,\n      \"v9\": 0.363787,\n      \"v10\": 0.090794,\n      \"v11\": -0.551600,\n      \"v12\": -0.617801,\n      \"v13\": -0.991390,\n      \"v14\": -0.311169,\n      \"v15\": 1.468177,\n      \"v16\": -0.470401,\n      \"v17\": 0.207971,\n      \"v18\": 0.025791,\n      \"v19\": 0.403993,\n      \"v20\": 0.251412,\n      \"v21\": -0.018307,\n      \"v22\": 0.277838,\n      \"v23\": -0.110474,\n      \"v24\": 0.066928,\n      \"v25\": 0.128539,\n      \"v26\": -0.189115,\n      \"v27\": 0.133558,\n      \"v28\": -0.021053,\n      \"amount\": 149.62\n    },\n    {\n      \"time\": 100,\n      \"v1\": 1.191857,\n      \"v2\": 0.266151,\n      \"v3\": 0.166480,\n      \"v4\": 0.448154,\n      \"v5\": 0.060018,\n      \"v6\": -0.082361,\n      \"v7\": -0.078803,\n      \"v8\": 0.085102,\n      \"v9\": -0.255425,\n      \"v10\": -0.166974,\n      \"v11\": 1.612727,\n      \"v12\": 1.065235,\n      \"v13\": 0.489095,\n      \"v14\": -0.143772,\n      \"v15\": 0.635558,\n      \"v16\": 0.463917,\n      \"v17\": -0.114805,\n      \"v18\": -0.183361,\n      \"v19\": -0.145783,\n      \"v20\": -0.069083,\n      \"v21\": -0.225775,\n      \"v22\": -0.638672,\n      \"v23\": 0.101288,\n      \"v24\": -0.339846,\n      \"v25\": 0.167170,\n      \"v26\": 0.125895,\n      \"v27\": -0.008983,\n      \"v28\": 0.014724,\n      \"amount\": 2.69\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/batch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "batch"]
+            },
+            "description": "Predict fraud for multiple transactions"
+          }
+        },
+        {
+          "name": "Upload CSV for Batch Prediction",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "CSV file with transactions"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/upload-csv",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "upload-csv"]
+            },
+            "description": "Upload a CSV file for batch predictions"
+          }
+        },
+        {
+          "name": "Get Prediction History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/history?limit=50&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "Get user's prediction history with pagination"
+          }
+        },
+        {
+          "name": "Get Prediction Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "stats"]
+            },
+            "description": "Get statistics about user's predictions"
+          }
+        },
+        {
+          "name": "Get Sample Transaction (Normal)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/sample/normal",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "sample", "normal"]
+            },
+            "description": "Get a sample normal transaction for testing"
+          }
+        },
+        {
+          "name": "Get Sample Transaction (Fraud)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/predict/sample/fraud",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "predict", "sample", "fraud"]
+            },
+            "description": "Get a sample fraudulent transaction for testing"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "description": "Analytics and model information",
+      "item": [
+        {
+          "name": "Get API Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/analytics/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analytics", "stats"]
+            },
+            "description": "Get API usage statistics"
+          }
+        },
+        {
+          "name": "Get Model Info",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/analytics/model",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analytics", "model"]
+            },
+            "description": "Get ML model information and metrics"
+          }
+        },
+        {
+          "name": "Get Feature Importance",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/analytics/features",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analytics", "features"]
+            },
+            "description": "Get feature importance from the model"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "description": "Report generation and download",
+      "item": [
+        {
+          "name": "List Reports",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "reports"]
+            },
+            "description": "List all generated reports"
+          }
+        },
+        {
+          "name": "Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"format\": \"pdf\",\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-12-31\",\n  \"include_charts\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/generate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "reports", "generate"]
+            },
+            "description": "Generate a new PDF or CSV report"
+          }
+        },
+        {
+          "name": "Download Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/reports/:report_id/download",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "reports", ":report_id", "download"],
+              "variable": [
+                {
+                  "key": "report_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Download a generated report"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Teams",
+      "description": "Team management",
+      "item": [
+        {
+          "name": "List Teams",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/teams",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "teams"]
+            },
+            "description": "List user's teams"
+          }
+        },
+        {
+          "name": "Create Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Fraud Analysts\",\n  \"description\": \"Main fraud detection team\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/teams",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "teams"]
+            },
+            "description": "Create a new team"
+          }
+        },
+        {
+          "name": "Get Team Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/teams/:team_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "teams", ":team_id"],
+              "variable": [
+                {
+                  "key": "team_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get team details and members"
+          }
+        },
+        {
+          "name": "Invite Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newmember@example.com\",\n  \"role\": \"analyst\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/teams/:team_id/invite",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "teams", ":team_id", "invite"],
+              "variable": [
+                {
+                  "key": "team_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Invite a member to the team"
+          }
+        },
+        {
+          "name": "Remove Member",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/v1/teams/:team_id/members/:user_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "teams", ":team_id", "members", ":user_id"],
+              "variable": [
+                {
+                  "key": "team_id",
+                  "value": "1"
+                },
+                {
+                  "key": "user_id",
+                  "value": "2"
+                }
+              ]
+            },
+            "description": "Remove a member from the team"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "description": "Webhook management",
+      "item": [
+        {
+          "name": "List Webhooks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks"]
+            },
+            "description": "List configured webhooks"
+          }
+        },
+        {
+          "name": "Create Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://hooks.slack.com/services/xxx/yyy/zzz\",\n  \"events\": [\"fraud_detected\", \"batch_complete\"],\n  \"secret\": \"my-webhook-secret\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks"]
+            },
+            "description": "Create a new webhook"
+          }
+        },
+        {
+          "name": "Test Webhook",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks/:webhook_id/test",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks", ":webhook_id", "test"],
+              "variable": [
+                {
+                  "key": "webhook_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Send a test payload to the webhook"
+          }
+        },
+        {
+          "name": "Delete Webhook",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks/:webhook_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks", ":webhook_id"],
+              "variable": [
+                {
+                  "key": "webhook_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Delete a webhook"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "Admin-only endpoints",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "users"]
+            },
+            "description": "List all users (admin only)"
+          }
+        },
+        {
+          "name": "Get System Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "stats"]
+            },
+            "description": "Get system-wide statistics"
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"analyst\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/users/:user_id/role",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "users", ":user_id", "role"],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "2"
+                }
+              ]
+            },
+            "description": "Update a user's role"
+          }
+        },
+        {
+          "name": "Get Audit Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/audit-logs?limit=100",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "audit-logs"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            },
+            "description": "View audit logs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health & Status",
+      "description": "Health checks and status",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "health"]
+            },
+            "description": "Check API health status"
+          }
+        },
+        {
+          "name": "Rate Limit Status",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/rate-limit",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "rate-limit"]
+            },
+            "description": "Get current rate limit status"
+          }
+        }
+      ]
+    }
+  ]
+}

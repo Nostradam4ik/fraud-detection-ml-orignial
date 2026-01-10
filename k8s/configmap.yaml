@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fraud-detection-config
+  namespace: fraud-detection
+data:
+  APP_NAME: "Fraud Detection API"
+  API_V1_PREFIX: "/api/v1"
+  DEBUG: "false"
+  LOG_LEVEL: "INFO"
+  CORS_ORIGINS: "*"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  REFRESH_TOKEN_EXPIRE_DAYS: "7"
+  RATE_LIMIT_REQUESTS: "100"
+  RATE_LIMIT_PERIOD: "minute"
+  REDIS_ENABLED: "true"
+  REDIS_URL: "redis://redis-service:6379"
+  DATABASE_URL: "sqlite:///./fraud_detection.db"

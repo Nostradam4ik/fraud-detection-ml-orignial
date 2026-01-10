@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: dev-root-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - vault_data:/vault/data
+      - ./config.hcl:/vault/config/config.hcl:ro
+      - ./policies:/vault/policies:ro
+    command: server -dev
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - fraud-network
+
+  # Vault initialization job (runs once)
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: vault-init
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: dev-root-token
+    depends_on:
+      vault:
+        condition: service_healthy
+    volumes:
+      - ./policies:/vault/policies:ro
+      - ./init-vault.sh:/init-vault.sh:ro
+    entrypoint: /bin/sh
+    command: /init-vault.sh
+    networks:
+      - fraud-network
+
+volumes:
+  vault_data:
+
+networks:
+  fraud-network:
+    driver: bridge

@@ -1,0 +1,53 @@
+# Fraud Detection System - Docker Compose
+# Author: Zhmuryk Andrii
+# Copyright (c) 2024 - All Rights Reserved
+
+version: '3.8'
+
+services:
+  # Backend API Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fraud-detection-api
+    restart: unless-stopped
+    environment:
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - SECRET_KEY=${SECRET_KEY:-your-super-secret-key-change-in-production}
+      - CORS_ORIGINS=http://localhost,http://localhost:80,http://frontend
+    volumes:
+      - ./backend/models:/app/models:ro
+      - ./backend/data:/app/data:ro
+      - backend_db:/app/db
+    networks:
+      - fraud-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fraud-detection-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - fraud-network
+
+networks:
+  fraud-network:
+    driver: bridge
+
+volumes:
+  backend_db:

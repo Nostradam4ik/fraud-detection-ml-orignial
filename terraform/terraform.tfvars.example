@@ -1,0 +1,39 @@
+# Example Terraform Variables
+# Copy this file to terraform.tfvars and fill in your values
+
+# Environment
+environment = "prod"
+aws_region  = "eu-west-1"
+
+# VPC
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+
+# RDS
+db_instance_class    = "db.t3.small"
+db_allocated_storage = 50
+db_name              = "fraud_detection"
+db_username          = "fraud_admin"
+db_password          = "YOUR_SECURE_PASSWORD_HERE"  # Use AWS Secrets Manager in production
+
+# Redis
+redis_node_type = "cache.t3.micro"
+redis_num_nodes = 1
+
+# ECS - Backend
+backend_image         = "123456789012.dkr.ecr.eu-west-1.amazonaws.com/fraud-detection-backend:latest"
+backend_cpu           = 512
+backend_memory        = 1024
+backend_desired_count = 2
+
+# ECS - Frontend
+frontend_image         = "123456789012.dkr.ecr.eu-west-1.amazonaws.com/fraud-detection-frontend:latest"
+frontend_cpu           = 256
+frontend_memory        = 512
+frontend_desired_count = 2
+
+# Monitoring
+alarm_email = "alerts@example.com"
+
+# DNS (optional)
+# domain_name = "fraud.example.com"

@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark mode base styles */
+html.dark body {
+  @apply bg-gray-900 text-gray-100;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Custom scrollbar - Light mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Custom scrollbar - Dark mode */
+html.dark ::-webkit-scrollbar-track {
+  @apply bg-gray-800 rounded;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+}
+
+/* Gradient backgrounds */
+.gradient-primary {
+  @apply bg-gradient-to-r from-primary-600 to-primary-700;
+}
+
+.gradient-danger {
+  @apply bg-gradient-to-r from-danger-500 to-danger-600;
+}
+
+.gradient-success {
+  @apply bg-gradient-to-r from-success-500 to-success-600;
+}
+
+/* Loading animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.33);
+  }
+  80%, 100% {
+    opacity: 0;
+  }
+}
+
+.loading-pulse {
+  animation: pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Status indicator */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot.online {
+  @apply bg-success-500;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.status-dot.offline {
+  @apply bg-danger-500;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+  /* Larger touch targets for mobile */
+  button, a, .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better spacing on mobile */
+  .mobile-padding {
+    @apply px-4 py-3;
+  }
+
+  /* Full-width buttons on mobile */
+  .mobile-full-btn {
+    @apply w-full;
+  }
+
+  /* Hide desktop-only elements */
+  .desktop-only {
+    @apply hidden;
+  }
+}
+
+/* Show mobile-only elements */
+@media (min-width: 641px) {
+  .mobile-only {
+    @apply hidden;
+  }
+}
+
+/* Bottom navigation bar for mobile */
+.mobile-nav {
+  @apply fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 50;
+}
+
+.mobile-nav-item {
+  @apply flex flex-col items-center justify-center py-2 px-3 text-xs font-medium transition-colors;
+  min-height: 56px;
+}
+
+.mobile-nav-item.active {
+  @apply text-blue-600 dark:text-blue-400;
+}
+
+.mobile-nav-item:not(.active) {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+/* Safe area support for notched devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-area-left {
+  padding-left: env(safe-area-inset-left, 0);
+}
+
+.safe-area-right {
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+/* Add bottom padding when mobile nav is visible */
+@media (max-width: 640px) {
+  .main-content-mobile {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0));
+  }
+}
+
+/* Pull-to-refresh indicator */
+.pull-to-refresh {
+  @apply flex items-center justify-center py-4 text-gray-500 dark:text-gray-400;
+  transform: translateY(-100%);
+  transition: transform 0.2s;
+}
+
+.pull-to-refresh.visible {
+  transform: translateY(0);
+}
+
+/* Touch-friendly input fields */
+@media (max-width: 640px) {
+  input, select, textarea {
+    @apply text-base;
+    min-height: 48px;
+  }
+}
+
+/* Swipe indicator */
+.swipe-indicator {
+  @apply w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-2;
+}
+
+/* Mobile card styles */
+@media (max-width: 640px) {
+  .mobile-card {
+    @apply rounded-none border-x-0;
+  }
+}
+
+/* Improved tap highlight */
+@media (max-width: 640px) {
+  * {
+    -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* Modal fullscreen on mobile */
+@media (max-width: 640px) {
+  .mobile-modal {
+    @apply fixed inset-0 rounded-none max-w-none max-h-none;
+  }
+}
+
+/* Floating action button */
+.fab {
+  @apply fixed bottom-20 right-4 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center;
+  @apply hover:bg-blue-700 active:scale-95 transition-all;
+  z-index: 40;
+}
+
+@media (min-width: 641px) {
+  .fab {
+    @apply bottom-6 right-6;
+  }
+}
+
+/* Skeleton loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  @apply bg-gray-200 dark:bg-gray-700 rounded;
+  background: linear-gradient(90deg,
+    theme('colors.gray.200') 25%,
+    theme('colors.gray.100') 50%,
+    theme('colors.gray.200') 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+html.dark .skeleton {
+  background: linear-gradient(90deg,
+    theme('colors.gray.700') 25%,
+    theme('colors.gray.600') 50%,
+    theme('colors.gray.700') 75%
+  );
+  background-size: 200% 100%;
+}

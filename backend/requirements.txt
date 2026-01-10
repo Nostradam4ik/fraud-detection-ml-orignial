@@ -1,0 +1,68 @@
+# FastAPI & Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Data Science & ML
+pandas==2.2.0
+numpy==1.26.3
+scikit-learn==1.4.0
+imbalanced-learn==0.12.0
+joblib==1.3.2
+shap==0.44.0
+xgboost==2.0.3
+
+# Validation & Settings
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.2
+
+# 2FA Authentication
+pyotp==2.9.0
+qrcode[pil]==7.4.2
+
+# Database
+sqlalchemy==2.0.25
+aiosqlite==0.19.0
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+
+# Caching
+redis==5.0.1
+
+# Rate Limiting
+slowapi==0.1.9
+
+# PDF Reports
+reportlab==4.0.8
+weasyprint==60.2
+
+# Excel Export
+openpyxl==3.1.2
+xlsxwriter==3.1.9
+
+# WebSocket
+websockets==12.0
+
+# Email
+aiosmtplib==3.0.1
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+httpx==0.26.0
+
+# Code Quality
+black==24.1.0
+isort==5.13.2
+flake8==7.0.0
+
+# Monitoring
+psutil==5.9.8
+sentry-sdk[fastapi]==1.39.2
