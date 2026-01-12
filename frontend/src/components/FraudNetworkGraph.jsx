@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
+import * as d3Force from 'd3-force';
 import {
   Network,
   RefreshCw,
@@ -70,13 +71,25 @@ export default function FraudNetworkGraph() {
         similarity_threshold: filters.threshold
       });
 
-      // Transform data for force graph
+      // Calculate circular layout positions
+      const nodeCount = data.nodes.length;
+      const centerX = 400;
+      const centerY = 300;
+      const radius = Math.min(250, 80 * nodeCount / Math.PI); // Dynamic radius based on node count
+
+      // Transform data for force graph with circular positions
       const transformedData = {
-        nodes: data.nodes.map(node => ({
-          ...node,
-          id: node.id,
-          val: node.size || 10
-        })),
+        nodes: data.nodes.map((node, index) => {
+          const angle = (2 * Math.PI * index) / nodeCount - Math.PI / 2;
+          return {
+            ...node,
+            id: node.id,
+            val: node.size || 10,
+            // Pre-calculate fixed positions in a circle
+            fx: centerX + radius * Math.cos(angle),
+            fy: centerY + radius * Math.sin(angle)
+          };
+        }),
         links: data.edges.map(edge => ({
           ...edge,
           source: edge.source,
@@ -366,19 +379,12 @@ export default function FraudNetworkGraph() {
               nodeCanvasObject={paintNode}
               linkCanvasObject={paintLink}
               onNodeClick={handleNodeClick}
-              nodeRelSize={8}
+              nodeRelSize={12}
               linkDirectionalParticles={2}
-              linkDirectionalParticleSpeed={0.005}
-              d3VelocityDecay={0.1}
-              cooldownTime={8000}
-              d3AlphaDecay={0.005}
-              linkDistance={350}
+              linkDirectionalParticleSpeed={0.003}
+              cooldownTicks={0}
               onEngineStop={() => graphRef.current?.zoomToFit(400, 50)}
-              d3Force={(d3Force) => {
-                d3Force("charge").strength(-2000).distanceMax(1500);
-                d3Force("link").distance(300);
-                d3Force("center", null);
-              }}
+              enableNodeDrag={false}
               backgroundColor="#111827"
               width={containerRef.current?.clientWidth || 800}
               height={600}
